@@ -83,9 +83,8 @@ function ProductListingPage() {
         <NavBar />
       </div>
       <main className="mt-10 flex flex-col items-center w-full max-w-screen-lg">
-        {" "}
         <div className="w-full flex justify-center mb-4">
-          <SearchBar onSearch={handleSearchChange} />{" "}
+          <SearchBar onSearch={handleSearchChange} />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
           {displayedProducts.length > 0 ? (
@@ -96,7 +95,7 @@ function ProductListingPage() {
             <p>No products found</p>
           )}
         </div>
-        {errMsg && <p className="text-red-500">{errMsg}</p>}{" "}
+        {errMsg && <p className="text-red-500">{errMsg}</p>}
         <Pagination
           currentPage={currentPage}
           totalPages={Math.ceil(allProducts.length / productsPerPage)}

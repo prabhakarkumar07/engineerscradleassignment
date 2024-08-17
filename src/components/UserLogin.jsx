@@ -9,7 +9,7 @@ function UserLogin() {
   });
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Added loading state
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -52,9 +52,8 @@ function UserLogin() {
           login(data.token);
           setMessage("Login successful");
           setError("");
-          setTimeout(() => {
-            navigate("/");
-          }, 2000);
+
+          navigate("/");
         } else {
           setError("Login failed: Incorrect email or password");
         }
@@ -108,7 +107,7 @@ function UserLogin() {
       <div className="mt-4 flex flex-col justify-end items-center">
         <p className="text-gray-700">Don't have an account?</p>
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/signup")}
           className="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700"
         >
           Sign Up
