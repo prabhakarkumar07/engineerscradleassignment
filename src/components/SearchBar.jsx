@@ -9,7 +9,7 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <div className="w-full flex justify-center mt-4">
+    <div className="w-full fixed z-50 top-16 left-0 right-0  sm:left-5 flex justify-center mt-4 mb-4">
       <input
         type="text"
         placeholder="Search products..."

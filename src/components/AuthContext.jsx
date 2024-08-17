@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
@@ -8,12 +9,12 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   const login = (token) => {
-    localStorage.setItem("token", token);
+    Cookies.set("token", token, { expires: 7 }); // Set token in cookies with a 7-day expiration
     fetchUserInfo(token);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    Cookies.remove("token"); // Remove token from cookies
     setUser(null);
     navigate("/");
   };
@@ -34,19 +35,19 @@ export function AuthProvider({ children }) {
         navigate("/product-listing");
       } else {
         setUser(null);
-        localStorage.removeItem("token");
+        Cookies.remove("token"); // Remove token if fetch fails
         navigate("/");
       }
     } catch (error) {
       console.error("Error fetching user info:", error);
       setUser(null);
-      localStorage.removeItem("token");
+      Cookies.remove("token"); // Remove token if there's an error
       navigate("/");
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token"); // Get token from cookies
     if (token) {
       fetchUserInfo(token);
     }
