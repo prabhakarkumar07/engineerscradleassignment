@@ -8,6 +8,8 @@ function UserLogin() {
     password: "",
   });
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Added loading state
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -26,6 +28,8 @@ function UserLogin() {
       setError("Both fields are required");
       return;
     }
+
+    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -46,7 +50,11 @@ function UserLogin() {
         const data = await response.json();
         if (data.token) {
           login(data.token);
-          navigate("/product-listing");
+          setMessage("Login successful");
+          setError("");
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
         } else {
           setError("Login failed: Incorrect email or password");
         }
@@ -57,12 +65,15 @@ function UserLogin() {
     } catch (error) {
       console.error("Login error:", error);
       setError("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="bg-gray-100 w-full max-w-sm mx-auto p-6 h-auto flex flex-col items-center justify-center gap-6">
       <h1 className="text-2xl font-semibold text-gray-700">User Login</h1>
+      {message && <p className="text-green-500">{message}</p>}
       {error && <p className="text-red-500">{error}</p>}
       <form
         onSubmit={handleSubmit}
@@ -89,14 +100,15 @@ function UserLogin() {
         <button
           type="submit"
           className="w-[60%] bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700"
+          disabled={isLoading}
         >
-          Login
+          {isLoading ? "Logging in..." : "Login"}
         </button>
       </form>
       <div className="mt-4 flex flex-col justify-end items-center">
         <p className="text-gray-700">Don't have an account?</p>
         <button
-          onClick={() => navigate("/register")} // Navigate to registration page
+          onClick={() => navigate("/")}
           className="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700"
         >
           Sign Up
