@@ -13,7 +13,7 @@ function NavBar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-gray-800 p-2 flex justify-between items-center z-50 gap-4">
+    <nav className="fixed top-0 left-0 right-0 bg-gray-800 p-2 flex justify-between items-center z-50 gap-4 ">
       <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white ml-3">
         Product
       </h1>
