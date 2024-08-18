@@ -7,7 +7,7 @@ function UserRegistration() {
     password: "",
     confirmPassword: "",
   });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -22,50 +22,65 @@ function UserRegistration() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const newErrors = validateForm(formData);
+    setErrors(newErrors);
 
-    if (!formData.email || !formData.password || !formData.confirmPassword) {
-      setError("All fields are required");
-      return;
-    }
+    if (Object.keys(newErrors).length === 0) {
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          "https://intern-task-api.bravo68web.workers.dev/auth/signup",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: formData.email,
+              password: formData.password,
+            }),
+          }
+        );
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const response = await fetch(
-        "https://intern-task-api.bravo68web.workers.dev/auth/signup",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
+        if (response.ok) {
+          setMessage("Registration successful");
+          setErrors({});
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
+        } else {
+          const data = await response.json();
+          setErrors({ apiError: data.message || "Registration failed" });
         }
-      );
-
-      if (response.ok) {
-        setMessage("Registration successful");
-        setError("");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      } else {
-        const data = await response.json();
-        setError(data.message || "Registration failed");
+      } catch (error) {
+        console.error("Registration error:", error);
+        setErrors({ apiError: "An error occurred. Please try again." });
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Registration error:", error);
-      setError("An error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
     }
+  };
+
+  const validateForm = (data) => {
+    const errors = {};
+
+    if (!data.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
+      errors.email = "Email is invalid";
+    }
+
+    if (!data.password) {
+      errors.password = "Password is required";
+    } else if (data.password.length < 8) {
+      errors.password = "Password must be at least 8 characters long";
+    }
+
+    if (data.confirmPassword !== data.password) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
+    return errors;
   };
 
   return (
@@ -74,36 +89,53 @@ function UserRegistration() {
         Registration Form
       </h1>
       {message && <p className="text-green-500">{message}</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {errors.apiError && <p className="text-red-500">{errors.apiError}</p>}
       <form
         onSubmit={handleSubmit}
         className="bg-white w-full flex flex-col rounded-lg shadow-lg p-6 justify-center items-center"
       >
         <div className="mb-6 flex flex-col gap-4 w-full">
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm your password"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-          />
+          <div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
+          </div>
+          <div>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            )}
+          </div>
+          <div>
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm your password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.confirmPassword}
+              </p>
+            )}
+          </div>
         </div>
         <button
           type="submit"

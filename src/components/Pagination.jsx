@@ -6,7 +6,6 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
       className="flex justify-between items-center mt-4  p-2 rounded-md"
       style={{ width: "250px" }}
     >
-      {/* Conditionally render Previous button */}
       {currentPage > 1 ? (
         <button
           onClick={() => onPageChange(currentPage - 1)}
@@ -22,7 +21,6 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         {currentPage} of {totalPages}
       </span>
 
-      {/* Conditionally render Next button */}
       {currentPage < totalPages ? (
         <button
           onClick={() => onPageChange(currentPage + 1)}

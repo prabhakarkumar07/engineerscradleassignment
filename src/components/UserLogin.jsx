@@ -107,7 +107,7 @@ function UserLogin() {
       <div className="mt-4 flex flex-col justify-end items-center">
         <p className="text-gray-700">Don't have an account?</p>
         <button
-          onClick={() => navigate("/signup")}
+          onClick={() => navigate("/")}
           className="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700"
         >
           Sign Up
